@@ -1,7 +1,7 @@
 # AGENTS.md
 
 ## Project Overview
-This project is a high-performance, web-based 3D point-cloud visualizer (similar to sci-fi CAD/radar scanner interfaces). It renders detailed 3D models as interactive, glowing dot-matrices with full pan, tilt, zoom, and rotation controls.
+This project is a high-performance, web-based 3D point-cloud visualizer (similar to sci-fi CAD/radar scanner interfaces). It renders detailed 3D models as interactive, glowing dot-matrices with rotation controls (yaw).
 
 ---
 
@@ -15,7 +15,7 @@ This project is a high-performance, web-based 3D point-cloud visualizer (similar
 ## 2. Recommended Tech Stack
 * **Rendering Engine:** `Three.js` (using `THREE.Points` and `THREE.PointsMaterial`)
 * **Controls & Navigation:** `Three.js/addons/controls/OrbitControls.js`
-* **Preprocessing Pipeline:** Python (`trimesh` or `open3d`) or Blender scripts for point sampling `.gltf`/`.obj` files into point arrays.
+* **Preprocessing Pipeline:** Manually use blender scripts for point sampling mesh into point arrays.
 * **Build Tool:** `Vite` (with JavaScript ES Modules or TypeScript)
 
 ---
@@ -24,10 +24,7 @@ This project is a high-performance, web-based 3D point-cloud visualizer (similar
 
 ```text
 ├── assets/
-│   ├── raw_models/           # Original 3D files (.gltf, .obj, .fbx)
 │   └── point_clouds/         # Sampled point data (.json or .bin)
-├── scripts/
-│   └── process_model.py      # Python script to convert meshes to point arrays
 ├── src/
 │   ├── components/
 │   │   ├── Viewer.js         # Main Three.js canvas setup & render loop
@@ -46,11 +43,8 @@ This project is a high-performance, web-based 3D point-cloud visualizer (similar
 ## 4. Workflows for Autonomous / AI Agents
 
 ### Agent Task A: Model Preprocessing Pipeline
-When adding new 3D models to the project:
-1. Place raw `.gltf` or `.obj` models inside `assets/raw_models/`.
-2. Run `scripts/process_model.py` to sample surface points.
-3. Export sampled coordinates (`[x, y, z, ...]` array) into `assets/point_clouds/<model-name>.json` or a `Float32Array` binary file.
-4. Normalize bounding boxes so models fit within a standard camera view radius (e.g., normalized radius of 5 units).
+1.Write a script file for blender to convert vertices into point cloud as sampled coordinates (`[x, y, z, ...]` array) as `<model-name>.json` or a `Float32Array` binary file.
+2.Normalize bounding boxes so models fit within a standard camera view radius (e.g., normalized radius of 5 units).
 
 ### Agent Task B: WebGL Setup (`Viewer.js`)
 When implementing or modifying the WebGL rendering logic:
@@ -80,10 +74,7 @@ When configuring camera controls:
    ```javascript
    controls.enableDamping = true;
    controls.dampingFactor = 0.05;
-   controls.enablePan = true;
-   controls.enableZoom = true;
    controls.enableRotate = true;
-   controls.screenSpacePanning = true; // Smooth 2D-like panning
    ```
 3. Ensure `controls.update()` is called inside the requestAnimationFrame render loop.
 
@@ -105,6 +96,6 @@ When configuring camera controls:
 ## 6. Verification & Definition of Done
 A feature or task is considered complete when:
 - [ ] 3D models load cleanly as point clouds without rendering solid faces.
-- [ ] Mouse dragging pans, rotates, and zooms the model smoothly.
+- [ ] Mouse with click rotates the model smoothly.
 - [ ] No WebGL errors appear in the browser developer console.
 - [ ] Frame rates remain stable at ~60 FPS during camera manipulation.
