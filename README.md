@@ -1,62 +1,45 @@
 # Sito GPOI — 3D Point-Cloud Viewer
 
-A high-performance, web-based 3D point-cloud visualizer with a sci-fi CAD / radar-scanner look.
-Detailed models are rendered as interactive, glowing dot matrices with full pan, tilt, zoom and
-rotation controls.
+A high-performance, web-based 3D point-cloud visualizer with a sci-fi CAD / radar-scanner aesthetic. Detailed models are rendered as interactive glowing dot-matrices with rotation controls and a minimal HUD.
 
-> See `AGENTS.md` for the full project rules, architecture and agent workflows.
+> See `AGENTS.md` for the full project rules, architecture, and AI agent workflows.
 
 ## Tech stack
 
-- **Rendering:** [Three.js](https://threejs.org/) — `THREE.Points` + `THREE.PointsMaterial` only
+- **Rendering:** [Three.js](https://threejs.org/) using `THREE.Points` and `THREE.PointsMaterial`
 - **Controls:** `OrbitControls` from `three/addons`
-- **Build tool:** [Vite](https://vite.dev/) (ES modules)
-- **Preprocessing:** Python (`trimesh` / `open3d`) to sample meshes into point arrays
+- **Build tool:** [Vite](https://vite.dev/)
+- **Preprocessing:** Blender or custom scripts used to convert mesh geometry into sampled point clouds
 
 ## Project structure
 
 ```text
 ├── assets/
-│   ├── raw_models/       # Original 3D files (.gltf, .obj, .fbx)
-│   └── point_clouds/     # Sampled point data (.json / .bin) served to the client
-├── scripts/
-│   └── process_model.py  # Mesh -> point array conversion
+│   └── point_clouds/         # Sampled point data (.json or .bin)
 ├── src/
 │   ├── components/
-│   │   ├── Viewer.js     # Three.js scene, camera, renderer, render loop
-│   │   ├── Controls.js   # OrbitControls configuration
-│   │   └── UIOverlay.js  # Sci-fi HUD overlay
+│   │   ├── Viewer.js         # Main Three.js canvas setup & render loop
+│   │   ├── Controls.js       # OrbitControls configuration (pan/zoom/rotate)
+│   │   └── UIOverlay.js      # Sci-fi HUD overlay and interface UI
 │   ├── loaders/
-│   │   └── PointLoader.js# Fetcher / parser for point cloud files
-│   ├── main.js           # Application entry point
-│   └── style.css         # UI overlay styles
+│   │   └── PointLoader.js    # Fetcher and parser for point cloud files
+│   ├── main.js               # Application entry point
+│   └── style.css             # Global styles and HUD layout
 ├── index.html
-└── package.json
+├── package.json
+└── README.md
 ```
 
-## Status
+## Development goals
 
-Repository skeleton only — folders are in place, the Vite + Three.js scaffold is the next step.
-Once `package.json`, `index.html` and `src/main.js` exist:
-
-```bash
-npm install
-npm run dev
-```
-
-## Model preprocessing
-
-1. Drop the raw `.gltf` / `.obj` into `assets/raw_models/`.
-2. Run `scripts/process_model.py` to sample surface points.
-3. The script writes `assets/point_clouds/<model-name>.json` (or `.bin`), normalized so the
-   model fits a standard view radius (5 units).
-
-> Note: raw high-poly meshes must never be shipped to the client. Large binaries are best
-> versioned with [Git LFS](https://git-lfs.com/).
+- Render models as 3D point clouds instead of solid faces.
+- Keep performance stable at roughly 60 FPS for up to 100,000 points.
+- Use only native `Three.js` materials and controls.
+- Keep the payload lightweight by pre-processing large models before delivery to the browser.
 
 ## Ground rules
 
-- No custom shaders (no GLSL, no `.vert` / `.frag` files) — built-in materials only.
-- 60 FPS target on desktop for up to 100,000 points.
-- Always `.dispose()` geometries and materials when swapping clouds.
-- Renderer must resize cleanly with the window.
+- No custom shaders or GLSL files.
+- Keep geometry and materials disposed when swapping point clouds.
+- Ensure responsive resizing for the renderer and camera.
+- Use simple, maintainable `OrbitControls` configuration with damping and rotation enabled.
