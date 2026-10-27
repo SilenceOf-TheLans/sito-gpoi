@@ -29,7 +29,7 @@ This project is a high-performance, web-based 3D point-cloud visualizer (similar
 ├── src/
 │   ├── components/
 │   │   ├── Viewer.js         # Main Three.js canvas setup & render loop
-│   │   ├── Controls.js       # OrbitControls configuration (pan/zoom/rotate)
+│   │   ├── Controls.js       # OrbitControls configuration (yaw only)
 │   │   └── UIOverlay.js      # Sci-fi UI overlay (HUD elements, title text)
 │   ├── loaders/
 │   │   └── PointLoader.js    # Fetcher and parser for point cloud files
